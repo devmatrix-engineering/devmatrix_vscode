@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.3
+
+- The Marketplace listing is named "DevMatrix DMX", because the name "DevMatrix" is already taken
+  there. Versions 0.8.1 and 0.8.2 were not published on the Marketplace. The extension id stays
+  `Dev-Matrix.devmatrix-dmx`.
+
 ## 0.8.2
 
 - The extension id is now `Dev-Matrix.devmatrix-dmx`, because the name `devmatrix` is already
