@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.2
+
+- The extension id is now `Dev-Matrix.devmatrix-dmx`, because the name `devmatrix` is already
+  taken on the Visual Studio Marketplace. The display name is still DevMatrix. Version 0.8.1 was
+  not published there, so there is nothing to migrate: install `Dev-Matrix.devmatrix-dmx`.
+
 ## 0.8.1
 
 - The Marketplace publisher is `Dev-Matrix`, so the extension id is `Dev-Matrix.devmatrix`; the

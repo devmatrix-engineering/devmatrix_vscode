@@ -87,6 +87,9 @@ const LEAK_PATTERNS = [
 /** The Marketplace and Open VSX publisher id. */
 const PUBLISHER = "Dev-Matrix";
 
+/** The extension name: "devmatrix" is taken on the Marketplace, so the id is Dev-Matrix.devmatrix-dmx. */
+const EXTENSION_NAME = "devmatrix-dmx";
+
 /** The public repository the listing links to. */
 const PUBLIC_REPOSITORY_URL = "https://github.com/devmatrix-engineering/devmatrix_vscode.git";
 const PUBLIC_BUGS_URL = "https://github.com/devmatrix-engineering/devmatrix_vscode/issues";
@@ -266,6 +269,9 @@ function auditManifest(m) {
   if (m.publisher !== undefined && m.publisher !== PUBLISHER) {
     v.push(`manifest: publisher must be "${PUBLISHER}" (found "${m.publisher}")`);
   }
+  if (m.name !== undefined && m.name !== EXTENSION_NAME) {
+    v.push(`manifest: name must be "${EXTENSION_NAME}" (found "${m.name}")`);
+  }
   if (typeof m.icon === "string" && /\.svg$/i.test(m.icon)) v.push("manifest: icon may not be an SVG");
   for (const field of ["name", "displayName", "publisher"]) {
     if (typeof m[field] === "string" && MICROSOFT_MARK.test(m[field])) {
@@ -415,6 +421,7 @@ module.exports = {
   PUBLIC_BUGS_URL,
   PUBLIC_REPOSITORY_URL,
   PUBLISHER,
+  EXTENSION_NAME,
   REQUIRED_FILES,
   RUNTIME_FILES,
   SECRET_PATTERNS,

@@ -46,10 +46,10 @@ works without signing in.
 ## Install
 
 - **VS Code**: search for **DevMatrix** in the Extensions view, or visit the
-  [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Dev-Matrix.devmatrix).
+  [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Dev-Matrix.devmatrix-dmx).
 - **Cursor, VSCodium, Windsurf and other Open VSX editors**: search for
   **DevMatrix** in the Extensions view, or visit
-  [Open VSX](https://open-vsx.org/extension/devmatrix/devmatrix).
+  [Open VSX](https://open-vsx.org/extension/Dev-Matrix/devmatrix-dmx).
 
 ## Features
 

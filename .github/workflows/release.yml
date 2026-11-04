@@ -2,8 +2,8 @@ name: Release
 
 # Publishes the extension package attached to a GitHub Release.
 #
-# A release carries exactly two assets: devmatrix-<version>.vsix and
-# devmatrix-<version>.vsix.sha256. The release tag must be v<version>.
+# A release carries exactly two assets: devmatrix-dmx-<version>.vsix and
+# devmatrix-dmx-<version>.vsix.sha256. The release tag must be v<version>.
 # The package is checked (inventory, secrets, leakage, listing rules,
 # third-party notices, pending owner decisions, digest and tag) before
 # anything is published.
