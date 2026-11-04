@@ -1,0 +1,84 @@
+DevMatrix Extension — End User License Agreement
+
+© 2026 DevMatrix Inc. All rights reserved.
+
+1. Ownership
+
+This software (the "Extension") is the exclusive property of DevMatrix Inc.,
+a Florida profit corporation (Document Number P26000034632), with its
+principal address at 759 SW Federal Highway, Suite 304, Stuart, FL 34994, USA
+(the "Licensor"), and is protected by copyright law and pending patents. The
+DevMatrix name, logo, lattice mark and the DMX specification language are
+trademarks and intellectual property of the Licensor.
+
+2. License grant
+
+The Licensor grants you a personal, non-exclusive, non-transferable, revocable
+license to install and use the Extension solely to interact with DevMatrix
+services to which you have been granted authorized access with a valid
+Workshop API key.
+
+3. Restrictions
+
+You may not, without the prior written permission of the Licensor:
+  - copy, modify, merge, publish, distribute, sublicense or sell copies of the
+    Extension or its source code;
+  - reverse engineer, decompile or disassemble the Extension, except to the
+    extent expressly permitted by applicable law;
+  - remove or alter any proprietary or copyright notice or the DevMatrix
+    branding.
+
+4. Third-party components
+
+The Extension includes third-party software components that are licensed to
+you under their own licenses, not under this Agreement. Those components and
+their licenses are listed in ThirdPartyNotices.txt, included with the
+Extension. Nothing in this Agreement restricts your rights under those
+licenses.
+
+5. Privacy and data
+
+The Extension sends data only to the DevMatrix backend you configure, as
+described in the Extension's README under "Data and privacy", and does not
+collect telemetry. The processing of that data is governed by the DevMatrix
+privacy policy at https://devmatrix.dev/privacy.
+
+6. Updates
+
+The Licensor may provide updates through the Visual Studio Marketplace or Open
+VSX. Updates are governed by this Agreement unless they come with their own
+terms.
+
+7. Termination
+
+This license ends automatically if you breach it, or if your authorized access
+to DevMatrix services ends. On termination you must uninstall the Extension.
+
+8. Export control
+
+You must comply with all export and sanctions laws that apply to your use of
+the Extension.
+
+9. Disclaimer of warranty and limitation of liability
+
+THE EXTENSION IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE EXTENSION OR THE USE OR OTHER DEALINGS IN THE EXTENSION.
+
+10. Governing law
+
+This Agreement is governed by the laws of the State of Florida, USA, without
+regard to its conflict-of-laws rules. The state courts located in Martin
+County, Florida, and the United States District Court for the Southern
+District of Florida have exclusive jurisdiction over any dispute arising out
+of or relating to this Agreement or the Extension, and you consent to the
+personal jurisdiction of those courts.
+
+11. Distribution terms
+
+When you obtain the Extension from the Visual Studio Marketplace or Open VSX,
+the terms of that marketplace also apply to your use of it. If they conflict
+with this Agreement on a matter they govern, they prevail on that matter.

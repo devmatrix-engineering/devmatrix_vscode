@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/devmatrix-engineering/devmatrix_vscode/security/advisories/new
+    about: Report security vulnerabilities privately.
+  - name: DevMatrix
+    url: https://devmatrix.dev
+    about: Product information and your DevMatrix account.

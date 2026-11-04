@@ -1,0 +1,58 @@
+name: Release
+
+# Publishes the extension package attached to a GitHub Release.
+#
+# A release carries exactly two assets: devmatrix-<version>.vsix and
+# devmatrix-<version>.vsix.sha256. The release tag must be v<version>.
+# The package is checked (inventory, secrets, leakage, listing rules,
+# third-party notices, pending owner decisions, digest and tag) before
+# anything is published.
+#
+# Visual Studio Marketplace: Trusted Publishing (GitHub OIDC), no stored token.
+# The publisher's policy names owner devmatrix-engineering, repository
+# devmatrix_vscode and workflow release.yml.
+# Open VSX: repository secret OVSX_TOKEN.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    if: github.repository == 'devmatrix-engineering/devmatrix_vscode'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5, Node 24
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6, Node 24
+        with:
+          node-version: 24
+      - name: Download the attached package and its digest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          mkdir release
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir release --pattern '*.vsix' --pattern '*.vsix.sha256'
+      - name: Check the package before publishing (blocking)
+        shell: bash
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          shopt -s nullglob
+          packages=(release/*.vsix)
+          digests=(release/*.vsix.sha256)
+          [ "${#packages[@]}" -eq 1 ] && [ "${#digests[@]}" -eq 1 ] || { echo "expected one .vsix and one .vsix.sha256 on the release"; exit 1; }
+          node .github/release/check.cjs --tag "$TAG" --sha256 "${digests[0]}" "${packages[0]}"
+      - name: Publish to the Visual Studio Marketplace
+        run: npx --yes @vscode/vsce@4.1.0 publish --packagePath release/*.vsix --oidc
+      - name: Publish to Open VSX
+        run: npx --yes ovsx@0.10.12 publish release/*.vsix --pat "$OVSX_TOKEN"
+        env:
+          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
