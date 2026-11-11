@@ -1,9 +1,14 @@
 # Changelog
 
-## 0.8.4
+## 0.8.5
 
+- The key you sign in with is now called the DevMatrix Key, in the commands, prompts, messages
+  and settings. It is the same key and works the same way: a key stored by an earlier version is
+  still used, and nothing has to be signed in again.
 - DMX highlighting and completion recognise alert receivers in the observability block, with
   the alert severities each one receives.
+- Version 0.8.4 carried only one of these two changes on each store: the alert receivers on the
+  Visual Studio Marketplace, the DevMatrix Key on Open VSX. 0.8.5 carries both on both.
 
 ## 0.8.3
 

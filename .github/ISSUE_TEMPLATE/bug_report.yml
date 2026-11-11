@@ -5,13 +5,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Do not include Workshop API keys or other secrets. For security vulnerabilities, see SECURITY.md instead.
+        Do not include DevMatrix Keys or other secrets. For security vulnerabilities, see SECURITY.md instead.
   - type: input
     id: version
     attributes:
       label: Extension version
       description: Extensions view → DevMatrix → version.
-      placeholder: "0.8.4"
+      placeholder: "0.8.5"
     validations:
       required: true
   - type: input

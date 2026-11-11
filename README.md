@@ -39,7 +39,7 @@ install from Open VSX): it understands DMX, validates it against your
 DevMatrix account, and opens your platform specs and wikis as ordinary editor
 documents.
 
-You need a DevMatrix account and a Workshop API key to use the online
+You need a DevMatrix account and a DevMatrix Key to use the online
 features. Editing `.dmx` files locally (highlighting, completion, snippets)
 works without signing in.
 
@@ -78,18 +78,18 @@ works without signing in.
 - Optionally register the DevMatrix MCP server for Claude Code in the current
   workspace (**DevMatrix: Connect Claude Code (MCP)**). Claude Code signs you
   in to DevMatrix in your browser the first time it connects (OAuth); your
-  Workshop key is not used for it.
+  DevMatrix Key is not used for it.
 
 ## Getting started
 
 1. Install the extension.
 2. Open the **DevMatrix** view in the activity bar and select **Sign in**.
-3. Paste your Workshop API key (`dm_live_…`). You can create one in the
+3. Paste your DevMatrix Key (`dm_live_…`). You can create one in the
    DevMatrix Workshop under **Settings → API Keys**, or with
-   **DevMatrix: Manage Workshop Keys (web)**.
+   **DevMatrix: Manage DevMatrix Keys (web)**.
 4. Your platforms appear in the view. Open a spec, edit it and save.
 
-A Workshop key can read and author specs and wikis. It cannot start a
+A DevMatrix Key can read and author specs and wikis. It cannot start a
 compilation.
 
 ## Settings
@@ -107,7 +107,7 @@ and MCP addresses can only come from your user settings.
 ## Requirements
 
 - VS Code 1.90 or later, or a compatible editor.
-- A DevMatrix account and a Workshop API key for the online features.
+- A DevMatrix account and a DevMatrix Key for the online features.
 
 ## Data and privacy
 
@@ -117,7 +117,7 @@ do what you ask:
 
 | What is sent | When | Why |
 | --- | --- | --- |
-| Your Workshop API key, in the request header | Every request after you sign in | To authenticate you |
+| Your DevMatrix Key, in the request header | Every request after you sign in | To authenticate you |
 | The text of the spec you are editing | When you validate, save, or type with as-you-type validation on | To validate and store it |
 | Wiki documents you upload | When you upload | To store them |
 | Requests for your platforms, specs, versions and wikis | When you browse or open them | To show them |
@@ -129,7 +129,7 @@ do what you ask:
   names the DevMatrix MCP gateway (by default `https://mcp.devmatrix.dev/mcp`)
   and nothing else: no key and no credential. Claude Code connects to that
   gateway itself and signs you in with OAuth in your browser; the extension
-  does not connect to it and does not share your Workshop key with it.
+  does not connect to it and does not share your DevMatrix Key with it.
 - The extension collects **no telemetry** and sends nothing to third parties.
 
 Read the full [Privacy policy](https://devmatrix.dev/privacy).

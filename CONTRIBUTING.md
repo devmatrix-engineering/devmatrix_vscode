@@ -13,5 +13,5 @@ Issues are welcome:
 - **Security vulnerabilities**: do not open an issue; see
   [SECURITY.md](SECURITY.md).
 
-Please do not include Workshop API keys, spec contents you consider
+Please do not include DevMatrix Keys, spec contents you consider
 confidential, or other secrets in an issue.

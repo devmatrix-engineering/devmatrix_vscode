@@ -66,7 +66,7 @@ const PACKAGE_METADATA = ["[Content_Types].xml", "extension.vsixmanifest"];
 
 /** Credential shapes. Each is specific enough to have no business in a package. */
 const SECRET_PATTERNS = [
-  ["DevMatrix Workshop key", /\bdm_(?:live|test)_[A-Za-z0-9_-]{16,}/],
+  ["DevMatrix Key", /\bdm_(?:live|test)_[A-Za-z0-9_-]{16,}/],
   ["GitHub token", /\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{40,})/],
   ["AWS access key id", /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/],
   ["private key", /-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----/],
