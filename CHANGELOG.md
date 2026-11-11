@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.4
+
+- DMX highlighting and completion recognise alert receivers in the observability block, with
+  the alert severities each one receives.
+
 ## 0.8.3
 
 - The Marketplace listing is named "DevMatrix DMX", because the name "DevMatrix" is already taken
