@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.6
+
+- Documentation: data disclosure; VS Code only. The README and the listing description state
+  when the extension sends data, what it sends, how it is used and kept, where it goes and who
+  receives it. No code changed.
+
 ## 0.8.5
 
 - The key you sign in with is now called the DevMatrix Key, in the commands, prompts, messages

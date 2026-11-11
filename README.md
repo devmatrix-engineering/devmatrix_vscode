@@ -24,8 +24,8 @@ describe the system in DMX, its specification language, and DevMatrix
 deterministically compiles it into production code, tests, migrations,
 infrastructure and evidence. Same spec in, same artifacts out, every run.
 
-- **Bring your own model for authoring.** Claude, Codex, Cursor or your own
-  model helps you write the spec. Compilation itself calls no model.
+- **Bring your own model for authoring.** Claude, Codex or your own model
+  helps you write the spec. Compilation itself calls no model.
 - **Production output.** Services, database schema and migrations, access
   policies, contract and security tests, and the infrastructure to run them.
 - **Evidence with every build.** A software bill of materials and a signed
@@ -34,8 +34,8 @@ infrastructure and evidence. Same spec in, same artifacts out, every run.
 
 ## What this extension does
 
-This extension brings the DevMatrix Workshop into VS Code (and editors that
-install from Open VSX): it understands DMX, validates it against your
+This extension brings the DevMatrix Workshop into Visual Studio Code: it
+understands DMX, validates it against your
 DevMatrix account, and opens your platform specs and wikis as ordinary editor
 documents.
 
@@ -45,11 +45,8 @@ works without signing in.
 
 ## Install
 
-- **VS Code**: search for **DevMatrix** in the Extensions view, or visit the
-  [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Dev-Matrix.devmatrix-dmx).
-- **Cursor, VSCodium, Windsurf and other Open VSX editors**: search for
-  **DevMatrix** in the Extensions view, or visit
-  [Open VSX](https://open-vsx.org/extension/Dev-Matrix/devmatrix-dmx).
+Search for **DevMatrix** in the Extensions view of Visual Studio Code, or
+visit the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=Dev-Matrix.devmatrix-dmx).
 
 ## Features
 
@@ -106,14 +103,24 @@ and MCP addresses can only come from your user settings.
 
 ## Requirements
 
-- VS Code 1.90 or later, or a compatible editor.
+- Visual Studio Code 1.90 or later.
 - A DevMatrix account and a DevMatrix Key for the online features.
 
 ## Data and privacy
 
 The extension sends data only to the DevMatrix backend set in
-`devmatrix.apiBaseUrl` (by default `https://devmatrix.dev`), and only to
-do what you ask:
+`devmatrix.apiBaseUrl` (by default `https://devmatrix.dev`). It runs no
+program on your machine and does not download code.
+
+### When data is sent
+
+Only when you act: signing in, browsing or opening your platforms, specs and
+wikis, validating, saving, uploading, and, if you leave it on, validating as
+you type (`devmatrix.deepValidate.enabled`). Nothing is sent in the
+background on its own, and nothing is sent before you sign in. Editing
+`.dmx` files locally sends nothing.
+
+### What is sent
 
 | What is sent | When | Why |
 | --- | --- | --- |
@@ -122,17 +129,45 @@ do what you ask:
 | Wiki documents you upload | When you upload | To store them |
 | Requests for your platforms, specs, versions and wikis | When you browse or open them | To show them |
 
-- The key is stored by VS Code's SecretStorage (your operating system's
-  keychain), separately for each backend address. It is never written to
-  settings or files and never logged.
-- **Connect Claude Code** writes a `.mcp.json` file to the workspace that
-  names the DevMatrix MCP gateway (by default `https://mcp.devmatrix.dev/mcp`)
-  and nothing else: no key and no credential. Claude Code connects to that
-  gateway itself and signs you in with OAuth in your browser; the extension
-  does not connect to it and does not share your DevMatrix Key with it.
-- The extension collects **no telemetry** and sends nothing to third parties.
+The extension collects **no telemetry**: no usage analytics, no system
+information, no crash reports.
 
-Read the full [Privacy policy](https://devmatrix.dev/privacy).
+### How it is used, kept and shared
+
+DevMatrix uses this data only to validate and store your specs and wikis
+and to show them back to you. Specs and wikis are kept as versions in your
+DevMatrix account for as long as the account keeps them. Retention periods
+and deletion are set out in the [Privacy policy](https://devmatrix.dev/privacy).
+The extension sends nothing to third parties. Who DevMatrix shares data
+with, if anyone, is set out in the Privacy policy.
+
+On your machine, the key is stored by VS Code's SecretStorage (your
+operating system's keychain), separately for each backend address. It is
+never written to settings or files and never logged.
+
+**Connect Claude Code** writes a `.mcp.json` file to the workspace that
+names the DevMatrix MCP gateway (by default `https://mcp.devmatrix.dev/mcp`)
+and nothing else: no key and no credential. Claude Code connects to that
+gateway itself and signs you in with OAuth in your browser; the extension
+does not connect to it and does not share your DevMatrix Key with it.
+
+### Where it is sent
+
+To the DevMatrix servers at `devmatrix.dev`, which run in the European
+Union (Finland). Some processing also takes place in the United States, so
+data may be transferred there; which data, by whom, and under what
+safeguards is set out in the [Privacy policy](https://devmatrix.dev/privacy).
+
+### Whether personal data is anonymized
+
+No. The spec text and wikis are your content and are stored as you wrote
+them, linked to your account, so you can open them again. Your DevMatrix
+Key identifies your account on every request.
+
+### Who receives it
+
+DevMatrix, the publisher of this extension, and no one else. Read the full
+[Privacy policy](https://devmatrix.dev/privacy).
 
 ## Support
 
