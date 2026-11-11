@@ -11,7 +11,9 @@ name: Release
 # Visual Studio Marketplace: Trusted Publishing (GitHub OIDC), no stored token.
 # The publisher's policy names owner devmatrix-engineering, repository
 # devmatrix_vscode and workflow release.yml.
-# Open VSX: repository secret OVSX_TOKEN.
+# Open VSX: Trusted Publishing (GitHub OIDC), no stored token. The trusted
+# publisher registered on open-vsx.org names owner devmatrix-engineering,
+# repository devmatrix_vscode and workflow release.yml.
 on:
   release:
     types: [published]
@@ -53,6 +55,4 @@ jobs:
       - name: Publish to the Visual Studio Marketplace
         run: npx --yes @vscode/vsce@4.1.0 publish --packagePath release/*.vsix --oidc
       - name: Publish to Open VSX
-        run: npx --yes ovsx@0.10.12 publish release/*.vsix --pat "$OVSX_TOKEN"
-        env:
-          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+        run: npx --yes ovsx@1.4.0 publish --packagePath release/*.vsix --trusted-publishing
