@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.0
+
+- The Applications table lists your applications, with a search and a summary that filters it. Each row opens the application's own dashboard: its grade, how many services it has built, its declared port, and the spec it compiled compared with the previous build's.
+- Seal an application, and publish its seal or a build's attestation from the editor, after a preview and only when you confirm.
+- Download a build's code, run its tests on this machine after you confirm, and upload the results to see how DevMatrix judges them.
+- VS Code's agent can use the DevMatrix MCP server.
+- Compilations update live while they run.
+- Completion and hovers match what the compiler accepts.
+- The check of whether an application's port is free stays on this machine: it no longer opens the port to your network.
+
 ## 0.8.6
 
 - Documentation: data disclosure; VS Code only. The README and the listing description state

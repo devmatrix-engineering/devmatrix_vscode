@@ -41,6 +41,15 @@ const RUNTIME_FILES = [
   "media/dmx-file.svg",
   "media/icon.png",
   "media/logo.png",
+  "media/verified/done-done.svg",
+  "media/verified/done-grey.svg",
+  "media/verified/done-warning.svg",
+  "media/verified/grey-done.svg",
+  "media/verified/grey-grey.svg",
+  "media/verified/grey-warning.svg",
+  "media/verified/warning-done.svg",
+  "media/verified/warning-grey.svg",
+  "media/verified/warning-warning.svg",
   "package.json",
   "syntaxes/dmx.tmLanguage.json",
   "themes/devmatrix-dark-color-theme.json",
@@ -120,6 +129,86 @@ const PRIVACY_POLICY_URL = "https://devmatrix.dev/privacy";
 
 /** An owner placeholder: an upper-case label and "— pending", in square brackets. */
 const PLACEHOLDER = /\[[A-Z][A-Z0-9 ,/&-]+ — pending[^\]]*\]/g;
+
+/**
+ * Competing editors. Marketplace Participation Policies §3(b): a publisher may
+ * not promote offerings for competing IDEs or editors in its Offerings, so the
+ * README names none of them. Proper nouns, so the CSS word "cursor" is not one.
+ */
+const COMPETING_EDITOR = /\b(?:Cursor|Windsurf|VSCodium)\b|\b(?:windsurf|vscodium)\b/;
+
+/** Forms of the product name the brand guidelines do not allow, outside code. */
+const BRAND_MISSPELLING = /\b(?:VSCode|vscode|VSC)\b/;
+
+/** The documentation the listing links (Participation Policies §1(i)). */
+const DOCUMENTATION_URL = "https://devmatrix.dev/docs/dmx-reference";
+
+/**
+ * The data block of the README (Publisher Agreement §8(b)(iii), points 1–5, and
+ * the Open VSX Publisher Agreement §6 "with whom it is shared"), in order.
+ */
+const DATA_SECTION = "## Data and privacy";
+const DATA_HEADINGS = [
+  "### When data is sent",
+  "### What is sent",
+  "### How it is used, kept and shared",
+  "### Where it is sent",
+  "### Whether personal data is anonymized",
+  "### Who receives it",
+];
+
+/** Telemetry and analytics packages. The extension sends no telemetry. */
+const TELEMETRY_PACKAGES = [
+  "@vscode/extension-telemetry", "applicationinsights", "@microsoft/applicationinsights-web",
+  "@microsoft/1ds-core-js", "@microsoft/1ds-post-js", "@sentry/node", "posthog-node", "mixpanel",
+  "@segment/analytics-node", "analytics-node", "@amplitude/analytics-node",
+];
+
+/** Settings that make the extension reach the network: tagged for the user's online-services filter. */
+const ONLINE_SETTINGS = ["devmatrix.apiBaseUrl", "devmatrix.deepValidate.enabled", "devmatrix.mcpUrl"];
+
+/** Destination settings an untrusted workspace may not set. */
+const RESTRICTED_SETTINGS = ["devmatrix.apiBaseUrl", "devmatrix.mcpUrl"];
+
+const COMMAND_CATEGORY = "DevMatrix";
+
+/** Default chords of the editor a contributed keybinding may not take over. */
+const DEFAULT_CHORDS = [
+  "ctrl+s", "ctrl+p", "ctrl+shift+p", "ctrl+c", "ctrl+v", "ctrl+x", "ctrl+z", "ctrl+y", "ctrl+shift+z",
+  "ctrl+f", "ctrl+h", "ctrl+shift+f", "ctrl+`", "ctrl+space", "ctrl+/", "ctrl+b", "ctrl+w", "ctrl+n",
+  "ctrl+o", "ctrl+a", "ctrl+g", "ctrl+d", "ctrl+k", "ctrl+tab", "ctrl+shift+e", "ctrl+shift+x",
+  "f1", "f2", "f5", "f8", "f9", "f10", "f11", "f12", "shift+f12", "alt+f12",
+];
+
+/**
+ * Code shapes the packaged JavaScript may not carry. Dynamic code is our own rule
+ * (it makes the Marketplace scan and review harder); the rest keep execution and
+ * networking to what the listing declares (Publisher Agreement §8(d)).
+ */
+const BUNDLE_RULES = [
+  // Every use of the name, direct or indirect: eval(s), (0,eval)(s), globalThis.eval(s).
+  ["dynamic code", "eval", /(?<![\w$])eval(?![\w$])/],
+  // The Function constructor, with or without new: new Function(s), Function("return this")().
+  ["dynamic code", "Function constructor", /(?<![\w$.])Function\s*\(/],
+  ["dynamic code", "node -e", /(?:process\.argv\[0\]|process\.execPath)\s*,\s*\[\s*["'](?:-e|--eval|-p|--print)["']/],
+  ["shell execution", "shell: true", /\bshell\s*:\s*(?:true|!0)\b/],
+  ["shell execution", "ShellExecution", /\bShellExecution\b/],
+  ["telemetry", "createTelemetryLogger", /\bcreateTelemetryLogger\b/],
+  ["network", "listens on every interface", /["'](?:0\.0\.0\.0|::|::0|\[::\]|0:0:0:0:0:0:0:0)["']/],
+  ["listing", "competing editor", /\b(?:Cursor|Windsurf|VSCodium)\b/],
+];
+
+/**
+ * child_process loaded under any name: `var r=require("child_process")`, wrapped in an
+ * interop helper (`r=h(require("child_process"))`), or used inline.
+ */
+const CHILD_PROCESS_BINDING = /([\w$]+)\s*=\s*(?:[\w$]+\()?require\(\s*["'](?:node:)?child_process["']\s*\)/g;
+
+/**
+ * Every `.listen(` in the packaged JavaScript names the loopback address. A host held
+ * in a variable is refused even when it is loopback at run time: the rule fails closed.
+ */
+const LISTEN_CALL = /\.listen\(([^)]{0,160})\)/g;
 
 /** Packaged documents a user reads, where an owner placeholder may not ship. */
 const USER_DOCS = ["README.md", "LICENSE", "CHANGELOG.md"];
@@ -206,6 +295,10 @@ function auditPackage(entries) {
     }
   }
 
+  for (const { path, bytes } of entries) {
+    if (/\.[cm]?js$/.test(path)) violations.push(...auditBundle(path, bytes.toString("utf8")));
+  }
+
   const read = reader(entries);
   const manifestText = read("package.json");
   if (manifestText) {
@@ -229,6 +322,20 @@ function auditPackage(entries) {
   }
   const readme = read("README.md");
   if (readme !== undefined) violations.push(...auditTrademarkNotice(readme));
+  if (readme !== undefined) violations.push(...auditListingText(readme));
+  if (manifestText) {
+    const manifest = JSON.parse(manifestText);
+    violations.push(...auditContributions(manifest));
+    const licensed = /^SEE LICENSE IN (\S+)$/.exec(manifest.license ?? "");
+    if (licensed && !shipped.includes(licensed[1])) {
+      violations.push(`license: the manifest points to ${licensed[1]}, which is not in the package`);
+    }
+    const changelog = read("CHANGELOG.md");
+    if (changelog !== undefined && typeof manifest.version === "string"
+        && !changelog.split("\n").includes(`## ${manifest.version}`)) {
+      violations.push(`changelog: CHANGELOG.md has no "## ${manifest.version}" heading for the packaged version`);
+    }
+  }
   if (readme !== undefined && !hasLink(readme, PRIVACY_POLICY_URL)) {
     violations.push(`privacy: README.md must link the privacy policy at ${PRIVACY_POLICY_URL}`);
   }
@@ -251,6 +358,140 @@ function auditTrademarkNotice(readme) {
   }
   if ((/\bclaude\b/i.test(readme) || MICROSOFT_MARK.test(readme)) && !/DevMatrix is not affiliated with or endorsed by/.test(readme)) {
     v.push("trademarks: README.md names other companies' products without saying DevMatrix is not affiliated with or endorsed by them");
+  }
+  return v;
+}
+
+/** The text a reader sees: fenced blocks, code spans and link targets removed. */
+function prose(markdown) {
+  return markdown
+    .replace(/^```[\s\S]*?^```/gm, "")
+    .replace(/`[^`\n]*`/g, "")
+    .replace(/\]\([^)]*\)/g, "]")
+    .replace(/<[^>]+>/g, "")
+    .replace(/https?:\/\/\S+/g, "");
+}
+
+/** A key prefix, or an instruction to paste, create or manage a key. */
+const RETIRED_KEY_REQUEST = /dm_live_|dm_test_|\b(?:paste|enter|create|manage)\b[^.\n]{0,40}\bDevMatrix Keys?\b/i;
+
+/**
+ * README rules of the listing: the data block with its six headings, in order,
+ * the documentation link, no competing editor, and the product name spelled
+ * the way the brand guidelines allow.
+ */
+function auditListingText(readme) {
+  const v = [];
+  const start = readme.indexOf(`\n${DATA_SECTION}\n`);
+  if (start < 0) {
+    v.push(`disclosure: README.md has no "${DATA_SECTION}" section`);
+  } else {
+    const next = readme.slice(start + 1).search(/\n## /);
+    const block = next < 0 ? readme.slice(start) : readme.slice(start, start + 1 + next);
+    let at = 0;
+    for (const heading of DATA_HEADINGS) {
+      const i = block.split("\n").indexOf(heading, at);
+      if (i < 0) v.push(`disclosure: the data section of README.md has no "${heading}" heading after the previous one`);
+      else at = i + 1;
+    }
+  }
+  // Publisher Agreement §8(b)(iii)(1): say whether data goes in response to the user,
+  // automatically in the background, or both. The extension does both.
+  if (/\bnothing (?:is )?sent in the background\b/i.test(readme)) {
+    v.push("disclosure: README.md says nothing is sent in the background; the extension checks for changes on its own");
+  }
+  if (start >= 0 && !/automatically in the background/i.test(readme)) {
+    v.push('disclosure: README.md must say what is sent "automatically in the background"');
+  }
+  if (!hasLink(readme, DOCUMENTATION_URL)) v.push(`docs: README.md must link the documentation at ${DOCUMENTATION_URL}`);
+  // DevMatrix Keys are retired: the listing may say so, never ask for one.
+  if (RETIRED_KEY_REQUEST.test(readme)) {
+    v.push("listing: README.md asks for a DevMatrix Key; the editor signs in with DevMatrix in the browser");
+  }
+  const text = prose(readme);
+  const editor = COMPETING_EDITOR.exec(text);
+  if (editor) v.push(`listing: README.md names the competing editor "${editor[0]}"`);
+  const misspelt = BRAND_MISSPELLING.exec(text);
+  if (misspelt) v.push(`trademarks: README.md writes "${misspelt[0]}"; write Visual Studio Code or VS Code`);
+  return v;
+}
+
+/**
+ * What the manifest contributes: no telemetry package, the online settings
+ * tagged, the destination settings restricted in untrusted workspaces, every
+ * command in the DevMatrix category without emoji, and no keybinding on a
+ * default chord. The description points to the data section.
+ */
+function auditContributions(m) {
+  const v = [];
+  const manifestText = JSON.stringify({ description: m.description, contributes: m.contributes });
+  if (/DevMatrix Key|dm_live_|dm_test_/.test(manifestText)) {
+    v.push("listing: the manifest still offers DevMatrix Keys; the editor signs in with DevMatrix in the browser");
+  }
+  if (typeof m.description === "string" && !/Data and privacy/.test(m.description)) {
+    v.push("disclosure: the manifest description must point to the Data and privacy section of the README");
+  }
+  if (typeof m.description === "string" && !/in the background/.test(m.description)) {
+    v.push("disclosure: the manifest description must say the extension checks for changes in the background");
+  }
+  for (const dep of Object.keys({ ...(m.dependencies ?? {}), ...(m.optionalDependencies ?? {}) })) {
+    if (TELEMETRY_PACKAGES.includes(dep)) v.push(`telemetry: the manifest depends on the telemetry package ${dep}`);
+  }
+  const contributes = m.contributes ?? {};
+  const configs = Array.isArray(contributes.configuration) ? contributes.configuration : [contributes.configuration ?? {}];
+  const properties = Object.assign({}, ...configs.map((c) => c?.properties ?? {}));
+  for (const name of ONLINE_SETTINGS) {
+    if (properties[name] === undefined) v.push(`settings: the online setting ${name} is not contributed`);
+    else if (!(properties[name].tags ?? []).includes("usesOnlineServices")) {
+      v.push(`settings: ${name} reaches the network and is not tagged usesOnlineServices`);
+    }
+  }
+  const untrusted = m.capabilities?.untrustedWorkspaces;
+  if (untrusted?.supported !== "limited") v.push('trust: capabilities.untrustedWorkspaces.supported must be "limited"');
+  if (typeof untrusted?.description !== "string" || untrusted.description.trim() === "") {
+    v.push("trust: capabilities.untrustedWorkspaces.description must say why trust is needed");
+  }
+  for (const name of RESTRICTED_SETTINGS) {
+    if (!(untrusted?.restrictedConfigurations ?? []).includes(name)) {
+      v.push(`trust: ${name} must be in capabilities.untrustedWorkspaces.restrictedConfigurations`);
+    }
+  }
+  const commands = Array.isArray(contributes.commands) ? contributes.commands : [];
+  if (commands.length === 0) v.push("commands: the manifest contributes no command");
+  for (const c of commands) {
+    if (c.category !== COMMAND_CATEGORY) v.push(`commands: ${c.command} must be in the "${COMMAND_CATEGORY}" category`);
+    if (/\p{Extended_Pictographic}/u.test(String(c.title ?? ""))) v.push(`commands: the title of ${c.command} has an emoji`);
+  }
+  for (const k of Array.isArray(contributes.keybindings) ? contributes.keybindings : []) {
+    for (const key of [k.key, k.mac, k.win, k.linux]) {
+      if (typeof key === "string" && DEFAULT_CHORDS.includes(key.toLowerCase().replace(/cmd\+/g, "ctrl+"))) {
+        v.push(`keybindings: ${k.command} takes the default chord ${key}`);
+      }
+    }
+  }
+  return v;
+}
+
+/** Rules for one packaged JavaScript file: one violation per rule that matches. */
+function auditBundle(file, text) {
+  const v = [];
+  for (const [kind, label, re] of BUNDLE_RULES) {
+    const m = re.exec(text);
+    if (m) v.push(`bundle: ${kind} (${label}) in ${file}: ${JSON.stringify(m[0].slice(0, 60))}`);
+  }
+  const shell = [/require\(\s*["'](?:node:)?child_process["']\s*\)\s*\.\s*exec(?:Sync)?\b/,
+    /\{[^}]*\bexec(?:Sync)?\s*[:,}][^}]*\}?\s*=\s*(?:[\w$]+\()?require\(\s*["'](?:node:)?child_process["']/];
+  for (const [, name] of text.matchAll(CHILD_PROCESS_BINDING)) {
+    const id = name.replace(/\$/g, "\\$");
+    // A default import reads through `.default`: x.default.execSync(…).
+    shell.push(new RegExp(`(?<![\\w$])${id}\\s*\\.\\s*(?:default\\s*\\.\\s*)?exec(?:Sync)?(?![\\w$])`));
+  }
+  const exec = shell.map((re) => re.exec(text)).find((m) => m !== null);
+  if (exec) v.push(`bundle: shell execution (child_process exec) in ${file}: ${JSON.stringify(exec[0].slice(0, 60))}`);
+  for (const m of text.matchAll(LISTEN_CALL)) {
+    if (!/["']127\.0\.0\.1["']/.test(m[1])) {
+      v.push(`bundle: network (listen without 127.0.0.1) in ${file}: ${JSON.stringify(m[0].slice(0, 60))}`);
+    }
   }
   return v;
 }
@@ -297,6 +538,9 @@ function auditManifest(m) {
     for (const k of m.keywords) {
       if (typeof k === "string" && MICROSOFT_MARK.test(k)) v.push(`manifest: keywords "${k}" uses a Microsoft mark`);
     }
+  }
+  if (typeof m.version === "string" && !/^\d+\.\d+\.\d+$/.test(m.version)) {
+    v.push(`manifest: version must be major.minor.patch with no pre-release tag (found "${m.version}")`);
   }
   if (m.license !== undefined && !/^SEE LICENSE IN \S+$/.test(m.license)) {
     v.push(`manifest: license must be "SEE LICENSE IN <file>" for a proprietary extension (found "${m.license}")`);
@@ -418,6 +662,14 @@ function auditRelease(entries, buffer, { tag, sha256 } = {}) {
 
 module.exports = {
   THIRD_PARTY_MARK,
+  COMPETING_EDITOR,
+  DATA_HEADINGS,
+  DOCUMENTATION_URL,
+  ONLINE_SETTINGS,
+  TELEMETRY_PACKAGES,
+  auditBundle,
+  auditContributions,
+  auditListingText,
   auditTrademarkNotice,
   ALLOWED_CATEGORIES,
   ARCHIVE_NAMES,
