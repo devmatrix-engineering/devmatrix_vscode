@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.9.2
+
+- Every graded test run shows its letter: a score below 80% reads D, where it used to say no grade.
+- The Applications table shows when each application was last compiled, in place of when it was created: «Compiling now» while a build runs.
+- A failed test on your machine says why in the same sentence the DevMatrix site shows, with the expected and actual status side by side when the status was wrong.
+- A check that needs the running application says whether it was not run in this build or has no result in this build.
+- A run whose results are being checked again says so, and one that could not be checked says to upload it again.
+- Inside `notifications`, completion offers `state_change(...)`: a notification sent when a record enters a state.
+- A token domain can say who issues its tokens: completion and highlighting know `issued_by` (`login` or `external`), `for_roles` and `jwks_uri`.
+- A file operation can cap how many rows it exports: completion and highlighting know `max_rows`.
+- A spec of a sealed application opens read-only. To change it, start a new revision.
+- When some of DevMatrix's checks could not finish on your spec, the editor shows one notice that says so, and does not ask you to report it.
+- An application with a single spec can declare `platform_roles` at the top of that spec, where completion offers it and highlighting knows it.
+- Completion, hovers and highlighting follow the current DMX language.
+
 ## 0.9.0
 
 - The Applications table lists your applications, with a search and a summary that filters it. Each row opens the application's own dashboard: its grade, how many services it has built, its declared port, and the spec it compiled compared with the previous build's.
