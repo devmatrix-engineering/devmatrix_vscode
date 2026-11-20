@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.4
+
+- A test run whose application is not the one this build produced says so, and says to download the build again, run its tests and upload again.
+- Inside `security`, completion and highlighting know `bootstrap_principal { }` with `role`, `login_ref`, `password_ref` and `set { }`: the application's first administrator, whose login and password are read from environment variables at deploy, never written in the spec.
+
 ## 0.9.2
 
 - Every graded test run shows its letter: a score below 80% reads D, where it used to say no grade.
